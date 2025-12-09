@@ -14,13 +14,14 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const session=useSession()
+    const session = useSession()
     console.log(session)
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault()
         setLoading(true)
         try {
             await signIn("credentials", { email, password })
+           router.push("/")
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -51,8 +52,8 @@ function Login() {
                     (() => {
                         const formValidation = email !== "" && password !== ""
                         return <button disabled={!formValidation || loading} className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex items-center justify-center gap-2 ${formValidation
-                                ? "bg-green-600 hober:bg-green-700 text-white" :
-                                "bg-gray-300 text-grey-500 cursor-not-allowed"
+                            ? "bg-green-600 hober:bg-green-700 text-white" :
+                            "bg-gray-300 text-grey-500 cursor-not-allowed"
                             }`}>
                             {loading ? <Loader2 className='w-5 h-5 animate-spin' /> : "Login"}
 
@@ -64,10 +65,10 @@ function Login() {
                     OR
                     <span className='flex-1 h-px bg-gray-200'></span>
                 </div>
-                <button className='w-full flex items-center justify-center gap-3 border border-gary-300 hover:bg-gray-50 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200'  onClick={()=>signIn("google")}>
+                <div className='w-full flex items-center justify-center gap-3 border border-gray-300 hover:bg-gray-50 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200 cursor-pointer' onClick={() => signIn("google",{callbackUrl:"/"})}>
                     <Image src={googleImage} width={20} height={20} alt='google' />
                     Continue with google
-                </button>
+                </div>
             </motion.form>
             <p className='cursor-pointer text-gray-600 mt-6 tect-sm flex items-center gap-1' onClick={() => router.push("/register")}>Want to create an account?<LogIn className='w-4 h-4' /><span className='text-green-600'>Sign Up</span></p>
         </div>
