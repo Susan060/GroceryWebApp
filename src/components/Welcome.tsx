@@ -9,7 +9,7 @@ type propType = {
 }
 function Welcome({ nextStep }: propType) {
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen text-center p-6 bg-gradient-to-b from-green-100 to-white
+    <div className='flex flex-col items-center justify-center min-h-screen text-center p-6 bg-linear-to-b from-green-100 to-white
 '>
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className='flex items-center gap-3'>
         <ShoppingBasket className='w-10 h-10 text-green-600' />
