@@ -13,7 +13,7 @@ interface IOrder{
             quanttity:number
         }
     ]
-    totalAmount:string,
+    totalAmount:number,
     paymentMethod:"cod"|"online"
     address:{
         fullName:string,
@@ -53,6 +53,7 @@ const orderSchema =new mongoose.Schema<IOrder>({
         enum:["cod","online"],
         default:"cod"
     },
+    totalAmount:Number,
     address:{
         fullname:String,
         mobile:String,
