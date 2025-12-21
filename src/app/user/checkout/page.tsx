@@ -38,7 +38,7 @@ function Checkout() {
             navigator.geolocation.getCurrentPosition((pos) => {
                 const { latitude, longitude } = pos.coords
                 setPosition([latitude, longitude])
-            }, (err) => { console.log('location error', err) }, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 })
+            }, (err) => { console.log('location error', err) }, { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 })
         }
     }, [])
     useEffect(() => {
@@ -127,7 +127,8 @@ function Checkout() {
                 },
                 paymentMethod
             })
-            console.log(result.data)
+            router.push("/user/order-success")
+            // console.log(result.data)
         }
         catch(error){
             console.log(error)
