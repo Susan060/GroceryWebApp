@@ -20,7 +20,7 @@ const markerIcon = new L.Icon({
 function Checkout() {
     const router = useRouter()
     const { userData } = useSelector((state: RootState) => state.user)
-    const { subTotal,deliveryFee,finalTotal,cartData } = useSelector((state: RootState) => state.cart)
+    const { subTotal, deliveryFee, finalTotal, cartData } = useSelector((state: RootState) => state.cart)
 
     const [address, setAddress] = useState({
         fullName: "",
@@ -93,36 +93,34 @@ function Checkout() {
         fetchAddress()
     }, [position])
     const [searchLoading, setSearchLoading] = useState(false)
-    const handleCod= async()=>
-    {
-        if(!position)
-        {
+    const handleCod = async () => {
+        if (!position) {
             return null
         }
-        try{
-            const result =await axios.post("/api/user/order",{
-                userId:userData?._id,
-                items:cartData.map(item=>(
+        try {
+            const result = await axios.post("/api/user/order", {
+                userId: userData?._id,
+                items: cartData.map(item => (
                     {
-                        grocery:item._id,
-                        name:item.name,
-                        price:item.name,
-                        unit:item.unit,
-                        quantity:item.quantity,
-                        image:item.image
+                        grocery: item._id,
+                        name: item.name,
+                        price: item.price,
+                        unit: item.unit,
+                        quantity: item.quantity,
+                        image: item.image
 
                     }
                 )),
-                totalAmount:finalTotal,
-                address:{
-                    fullName:address.fullName,
-                    mobile:address.mobile,
-                    city:address.city,
-                    state:address.state,
-                    fullAddress:address.fullAddress,
-                    pincode:address.pincode,
-                    latitude:position[0],
-                    longitude:position[1]
+                totalAmount: finalTotal,
+                address: {
+                    fullName: address.fullName,
+                    mobile: address.mobile,
+                    city: address.city,
+                    state: address.state,
+                    fullAddress: address.fullAddress,
+                    pincode: address.pincode,
+                    latitude: position[0],
+                    longitude: position[1]
 
                 },
                 paymentMethod
@@ -130,7 +128,45 @@ function Checkout() {
             router.push("/user/order-success")
             // console.log(result.data)
         }
-        catch(error){
+        catch (error) {
+            console.log(error)
+        }
+    }
+    const handleOnlinePayment = async () => {
+        if (!position) {
+            return null
+        }
+        try {
+            const result = await axios.post("/api/user/payment", {
+                userId: userData?._id,
+                items: cartData.map(item => (
+                    {
+                        grocery: item._id,
+                        name: item.name,
+                        price: item.price,
+                        unit: item.unit,
+                        quantity: item.quantity,
+                        image: item.image
+
+                    }
+                )),
+                totalAmount: finalTotal,
+                address: {
+                    fullName: address.fullName,
+                    mobile: address.mobile,
+                    city: address.city,
+                    state: address.state,
+                    fullAddress: address.fullAddress,
+                    pincode: address.pincode,
+                    latitude: position[0],
+                    longitude: position[1]
+
+                },
+                paymentMethod
+
+            })
+            window.location.href=result.data.url
+        } catch (error) {
             console.log(error)
         }
     }
@@ -224,20 +260,18 @@ function Checkout() {
                 p-6 border-gray-100 h-fit'>
                     <h2 className='text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2'><CreditCard className='text-green-600' />Payment Method</h2>
                     <div className="space-y-4 mb-6">
-                        <button onClick={()=>setPaymentMethod("online")} className={`flex items-center gap-3 w-full border rounded-lg p-3 transition-all
-                            ${
-                            paymentMethod==="online"
-                            ? "border-green-600 bg-green-50 shadow-sm"
-                            : "hover:bg-gray-50"}`}>
+                        <button onClick={() => setPaymentMethod("online")} className={`flex items-center gap-3 w-full border rounded-lg p-3 transition-all
+                            ${paymentMethod === "online"
+                                ? "border-green-600 bg-green-50 shadow-sm"
+                                : "hover:bg-gray-50"}`}>
                             <CreditCardIcon className='text-green-600' /><span className='font-medium text-gray-700'> Online (Stripe)</span>
                         </button>
-                        <button onClick={()=>setPaymentMethod("cod")} className={
+                        <button onClick={() => setPaymentMethod("cod")} className={
                             `flex items-center gap-3 w-full border rounded-lg p-3 transition-all
-                            ${
-                            paymentMethod==="cod"
-                            ? "border-green-600 bg-green-50 shadow-sm"
-                            : "hover:bg-gray-50"}`}>
-                            <Truck className='text-green-600' /><span className='font-medium text-gray-700'> Cash 
+                            ${paymentMethod === "cod"
+                                ? "border-green-600 bg-green-50 shadow-sm"
+                                : "hover:bg-gray-50"}`}>
+                            <Truck className='text-green-600' /><span className='font-medium text-gray-700'> Cash
                                 on Delivery
                             </span>
                         </button>
@@ -258,16 +292,16 @@ function Checkout() {
                         </div>
                     </div>
                     <motion.button
-                    whileTap={{scale:0.93}} 
-                    className='w-full mt-6 bg-green-600 text-white py-3 rounded-full hover:bg-green-700
-                    transition-all font-semibold' onClick={()=>{
-                        if(paymentMethod=="cod"){
-                            handleCod()
-                        }else{
-                            null
-                        }
-                    }}>
-                        {paymentMethod==="cod"?"Place Order":"Pay & Place Order"}
+                        whileTap={{ scale: 0.93 }}
+                        className='w-full mt-6 bg-green-600 text-white py-3 rounded-full hover:bg-green-700
+                    transition-all font-semibold' onClick={() => {
+                            if (paymentMethod == "cod") {
+                                handleCod()
+                            } else {
+                                handleOnlinePayment()
+                            }
+                        }}>
+                        {paymentMethod === "cod" ? "Place Order" : "Pay & Place Order"}
                     </motion.button>
                 </motion.div>
             </div>
