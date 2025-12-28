@@ -9,6 +9,7 @@ import Nav from "@/components/Nav";
 import { json } from "stream/consumers";
 import AdminDashboard from "@/components/AdminDashboard";
 import DeliveryBoy from "@/components/DeliveryBoy";
+import GeoUpdater from "@/components/GeoUpdater";
 
 async function Home() {
   await connectDb()
@@ -26,6 +27,7 @@ async function Home() {
   return (
     <>
       <Nav user={plainUser}/>
+      <GeoUpdater userId={plainUser._id}/>
       {user.role=="user"?(<UserDashboard/>):user.role=="admin"?(<AdminDashboard/>):<DeliveryBoy/>}
     </>
   );

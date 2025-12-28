@@ -8,7 +8,7 @@ interface IUser {
     mobile?: string
     role: "user" | "deliveryBoy" | "admin"
     image?: string
-    location? : {
+    location?: {
         type: {
             type: StringConstructor;
             enum: string[];
@@ -18,7 +18,9 @@ interface IUser {
             type: NumberConstructor[];
             default: number[];
         };
-    }
+    },
+    socketId: string | null
+    isOnline: Boolean
 }
 const userSchema = new mongoose.Schema<IUser>({
     name: {
@@ -61,6 +63,14 @@ const userSchema = new mongoose.Schema<IUser>({
             type: [Number],
             default: [0, 0]
         }
+    },
+    socketId: {
+        type: String,
+        default: null
+    },
+    isOnline: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 
