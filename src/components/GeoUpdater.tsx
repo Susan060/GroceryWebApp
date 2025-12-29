@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 
 function GeoUpdater({ userId }: { userId: string }) {
     let socket = getSocket()
+    socket.emit('identity',userId)
     useEffect(() => {
         if (!userId) return
         if (!navigator.geolocation) return
