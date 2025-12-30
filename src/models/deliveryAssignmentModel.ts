@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose"
-interface IDeliveryAssignment {
+export interface IDeliveryAssignment {
     _id?: mongoose.Types.ObjectId,
     order: mongoose.Types.ObjectId,
     brodcastedTo: mongoose.Types.ObjectId[],
