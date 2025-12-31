@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { IDeliveryAssignment } from '@/models/deliveryAssignmentModel'
+import { getSocket } from '@/lib/socket'
 
 function DeliveryBoyDashboard() {
     const [assignments, setAssignments] = useState<any[]>([])
@@ -18,6 +19,14 @@ function DeliveryBoyDashboard() {
         }
         fetchAssignments()
     }, [])
+    useEffect(():any=>{
+        const socket=getSocket()
+        socket.on("new-assignment",(deliveryAssignment)=>{
+            setAssignments((prev)=>[...prev,deliveryAssignment])
+
+        })
+        return() => {socket.off("new-assignment")}
+    },[])
     return (
         <div className='w-full min-h-screen bg-gray-50 p-4'>
             <div className='max-w-3xl mx-auto'>

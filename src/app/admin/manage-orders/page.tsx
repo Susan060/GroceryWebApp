@@ -5,6 +5,7 @@ import { IOrder } from '@/models/order.model'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AdminOrderCard from '@/components/AdminOrderCard'
+import { getSocket } from '@/lib/socket'
 
 function ManageOrders() {
     const [orders, setOrders] = useState<IOrder[]>()
@@ -20,6 +21,14 @@ function ManageOrders() {
         }
         getOrders()
     }, [])
+    useEffect(():any=>{
+        const socket=getSocket()
+        socket?.on("new-order",(newOrder)=>{
+            console.log(newOrder)
+            setOrders((prev)=>[newOrder,...prev!])
+        })
+        return ()=>socket.off("new-order")
+    },[])
     return (
         <div className='min-h-screen bg-gray-50 w-full'>
             <div className='fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b z-50'>

@@ -1,4 +1,5 @@
 import connectDb from "@/lib/db";
+import emitEventHandler from "@/lib/emitEventHandler";
 import DeliveryAssignment from "@/models/deliveryAssignmentModel";
 import Order from "@/models/order.model";
 import User from "@/models/user.model";
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest, { params }: { params: { orderId: st
             const candidates = availableDeliveryBoys.map(b => b._id)
             if (candidates.length == 0) {
                 await order.save()
+                await emitEventHandler("order-status-update", { orderId: order._id, status: order.status })
                 return NextResponse.json(
                     { message: "There is no Available Delivery Boys" },
                     { status: 200 }
@@ -51,6 +53,13 @@ export async function POST(req: NextRequest, { params }: { params: { orderId: st
                 brodcastedTo: candidates,
                 status: "brodcasted"
             })
+            await deliveryAssignment.populate("order")
+            for (const boyId of candidates) {
+                const boy = await User.findById(boyId)
+                if (boy.socketId) {
+                    await emitEventHandler("new-assignment",  deliveryAssignment , boy.socketId)
+                }
+            }
             order.assignment = deliveryAssignment._id,
                 deliveryBoysPayload = availableDeliveryBoys.map(b => ({
                     id: b._id,
@@ -63,18 +72,19 @@ export async function POST(req: NextRequest, { params }: { params: { orderId: st
         }
         await order.save()
         await order.populate("user")
+        await emitEventHandler("order-status-update", { orderId: order._id, status: order.status })
 
         return NextResponse.json(
             {
-                assignment:order.assignment?._id,
-                availableBoys:deliveryBoysPayload
+                assignment: order.assignment?._id,
+                availableBoys: deliveryBoysPayload
             },
-            {status:200}
+            { status: 200 }
         )
     } catch (error) {
         return NextResponse.json(
-            {message:`Update status Error ${error}`},
-            {status:500}
+            { message: `Update status Error ${error}` },
+            { status: 500 }
         )
     }
 }

@@ -1,13 +1,14 @@
 'use client'
+import { getSocket } from '@/lib/socket'
 import { IOrder } from '@/models/order.model'
 import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Truck } from 'lucide-react'
 import { motion } from 'motion/react'
-import { div } from 'motion/react-client'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function UserOrderCard({ order }: { order: IOrder }) {
     const [expanded, setExpanded] = useState(false)
+    const [status, setStatus] = useState(order.status)
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -22,6 +23,15 @@ function UserOrderCard({ order }: { order: IOrder }) {
 
         }
     }
+    useEffect(():any => {
+        const socket = getSocket()
+        socket.on("order-status-update", (data) => {
+            if (data.orderId.toString() == order?._id!.toString()) {
+                setStatus(data.status)
+            }
+        })
+        return () => socket.off("order-status-update")
+    }, [])
     return (
         <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -41,7 +51,7 @@ function UserOrderCard({ order }: { order: IOrder }) {
                         {order.isPaid ? "Paid" : "Unpaid"}
                     </span>
                     <span className={`px3 py-1 text-xs font-semibold border rounded-full 
-            ${getStatusColor(order.status)}`}>{order.status}</span>
+            ${getStatusColor(status)}`}>{status}</span>
 
                 </div>
             </div>
@@ -75,19 +85,19 @@ function UserOrderCard({ order }: { order: IOrder }) {
                         transition={{ duration: 0.3 }}
                         className='overlfow-hidden'>
                         <div className='mt-3 sapce-y-3'>
-                            {order.items.map((item,index)=>(
+                            {order.items.map((item, index) => (
                                 <div key={index}
-                                className='flex justify-between items-center bg-gray-50 rounded-xl px-3 py-2 hover:bg-gray-100
+                                    className='flex justify-between items-center bg-gray-50 rounded-xl px-3 py-2 hover:bg-gray-100
                                 '>
                                     <div className='flex items-center gap-3'>
                                         <Image src={item.image} alt={item.name} width={48} height={48}
-                                        className=' rounded-lg object-cover border border-gray-200' />
+                                            className=' rounded-lg object-cover border border-gray-200' />
                                         <div>
                                             <p className='text-sm font-medium text-gray-800'>{item.name}</p>
                                             <p className='text-xs text-gray-500'>{item.quantity} x {item.unit}</p>
                                         </div>
                                     </div>
-                                    <p className='text-sm font-medium text-gray-800'>रु{Number(item.price)*item.quantity}</p>
+                                    <p className='text-sm font-medium text-gray-800'>रु{Number(item.price) * item.quantity}</p>
                                 </div>
                             ))}
 
@@ -98,8 +108,8 @@ function UserOrderCard({ order }: { order: IOrder }) {
                 {/* Total Amount */}
                 <div className='border-t pt-3 flex justify-between items-center text-sm font-semibold text-gray-800' >
                     <div className='flex items-center gap-2 text-gray-700 text-sm'>
-                        <Truck size={16} className='text-green-600'/>
-                        <span>Delivery: <span className='text-green-700 font-semibold'>{order.status}</span></span>
+                        <Truck size={16} className='text-green-600' />
+                        <span>Delivery: <span className='text-green-700 font-semibold'>{status}</span></span>
                     </div>
                     <div>
                         Total: <span className='text-green-700 font-semibold'>रु{order.totalAmount}</span>

@@ -9,7 +9,7 @@ import axios from 'axios'
 function AdminOrderCard({ order }: { order: IOrder }) {
     const statusOptions = ["pending", "out of delivery"]
     const [expanded, setExpanded] = useState(false)
-    const [status,setStatus]=useState<string>(order.status)
+    const [status,setStatus]=useState<string>(order.status||"pending")//pending added erro exist
     const updateStatus = async (orderId: string, status: string) => {
         try {
             const result = await axios.post(`/api/admin/update-order-status/${orderId}`, { status })
