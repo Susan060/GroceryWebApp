@@ -38,6 +38,7 @@ function Nav({ user }: { user: IUser }) {
 
     const sideBar = menuOpen ? createPortal(
         <AnimatePresence>
+            {/* MenuBar */}
             <motion.div initial={{ x: -100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -100 }}
@@ -59,7 +60,7 @@ function Nav({ user }: { user: IUser }) {
                     <Link href={"/admin/add-grocery"} className=' flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all'>
                         <PlusCircle className='w-5 h-5' /> Add Grocery</Link>
                     <Link href={""} className='flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all'> <Boxes className='w-5 h-5' />View Grocery</Link>
-                    <Link href={""} className='flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all'> <ClipboardCheck className='w-5 h-5' />Manage orders</Link>
+                    <Link href={"/admin/manage-orders"} className='flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all'> <ClipboardCheck className='w-5 h-5' />Manage orders</Link>
                 </div>
                 <div className='my-5 border-t border-white/20'></div>
                 <div className='flex items-center gap-3 text-red-300 font-semibold  mt-auto hover:bg-red-500/20 p-3 rounded-lg transition-all' onClick={async () => await signOut({ callbackUrl: "/" })}>
