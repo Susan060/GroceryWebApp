@@ -7,6 +7,7 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import mongoose from 'mongoose'
 import { IUser } from '@/models/user.model'
+import { useRouter } from 'next/navigation'
 interface IOrder {
     _id?: mongoose.Types.ObjectId
     user: mongoose.Types.ObjectId
@@ -43,6 +44,7 @@ interface IOrder {
 function UserOrderCard({ order }: { order: IOrder }) {
     const [expanded, setExpanded] = useState(false)
     const [status, setStatus] = useState(order.status)
+    const router=useRouter()
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -109,8 +111,9 @@ function UserOrderCard({ order }: { order: IOrder }) {
                     <a href={`tel:${order.assignedDeliveryBoy.mobile}`}
                         className='bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700 transition'>Call</a>
                 </div>
+                {/* Track Order */}
                     <button className='w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2
-                rounded-xl shadow hover:bg-green-700 transition'><Truck size={18} /> Track Your Order</button></>}
+                rounded-xl shadow hover:bg-green-700 transition' onClick={()=>router.push(`/user/track-order/${order._id?.toString()}`)}><Truck size={18} /> Track Your Order</button></>}
                 <div className='flex items-center gap-2 text-gray-700 text-sm'>
                     <MapPin size={16} className='text-green-600' />
                     <span className='truncate'>{order.address.fullAddress}</span>

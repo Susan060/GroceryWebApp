@@ -234,6 +234,7 @@ function Checkout() {
                             <button className='bg-green-600 text-white px-5 rounded-lg hover:bg-green-700 transition-all font-medium' onClick={handleSearchQuery}
                             > {searchLoading ? <Loader2 size={16} className='animate-spin' /> : "Search"}</button>
                         </div>
+                        {/* Map container */}
                         <div className='relative mt-6 h-[250px] rounded-xl overflow-hidden border border-gray-200 shadow-inner'>
                             {position && <MapContainer center={position as LatLngExpression} zoom={13} scrollWheelZoom={true} className='w-full h-full'>
                                 <TileLayer
