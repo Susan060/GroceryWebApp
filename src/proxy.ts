@@ -105,7 +105,8 @@ export async function proxy(req: NextRequest) {
   // ✅ Allow these APIs WITHOUT auth
   if (
     pathname === "/api/user/stripe/webhook" ||
-    pathname.startsWith("/api/socket")
+    pathname.startsWith("/api/socket")||
+    pathname.startsWith("/api/chat") // 🔴 ADDED (FIX)
   ) {
     return NextResponse.next()
   }
@@ -152,7 +153,7 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/user/stripe/webhook|api/socket).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/user/stripe/webhook|api/socket|api/chat).*)',
   ],
 }
 
