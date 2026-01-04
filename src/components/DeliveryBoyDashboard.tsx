@@ -87,11 +87,21 @@ function DeliveryBoyDashboard() {
             console.log(error)
         }
     }
+    useEffect(():any=> {
+        const socket = getSocket()
+        socket.on("update-deliveryBoy-location", ({ userId, location }) => {
+            setDeliveryBoyLocation({
+                latitude: location.coordinates[1],
+                longitude: location.coordinates[0]
+            })
+        })
+        return () => { socket.off("update-deliveryBoy-location") }
+    }, [])
     useEffect(() => {
         fetchCurrentOrder()
         fetchAssignments()
     }, [userData])
-// when delivery boy takes Order
+    // when delivery boy takes Order
     if (activeOrder && userLocation) {
         return (
             <div className='p-4 pt-[120px] min-h-screen bg-gray-50'>
@@ -102,7 +112,7 @@ function DeliveryBoyDashboard() {
                         <LiveMap userLocation={userLocation} deliveryBoyLocation={deliveryBoyLocation} />
 
                     </div>
-                    <DeliveryChat orderId={activeOrder.order._id} deliveryBoyId={userData?._id!}/>
+                    <DeliveryChat orderId={activeOrder.order._id} deliveryBoyId={userData?._id!} />
                 </div>
 
             </div>
@@ -113,7 +123,7 @@ function DeliveryBoyDashboard() {
         <div className='w-full min-h-screen bg-gray-50 p-4'>
             <div className='max-w-3xl mx-auto'>
                 <h2 className='text-2xl font-bold mt-[120px] mb-[30px]'>Delivery Assignments </h2>
-                {assignments.map((a,index) => (
+                {assignments.map((a, index) => (
                     <div key={index} className='p-5 bg-white rounded-xl shadow mb-4 border'>
                         <p ><b>Order Id </b> #{a?.order._id.slice(-6)}</p>
                         <p className='text-gray-600'>{a.order.address.fullAddress}</p>
