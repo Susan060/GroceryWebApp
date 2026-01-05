@@ -73,7 +73,8 @@ function DeliveryBoyDashboard() {
     const handleAccept = async (id: string) => {
         try {
             const result = await axios.get(`/api/delivery/assignment/${id}/accept-assignment`)
-            console.log(result)
+            // console.log(result)
+            fetchCurrentOrder()
         } catch (error) {
             console.log(error)
         }
@@ -149,20 +150,20 @@ function DeliveryBoyDashboard() {
                     <div className='mt-6 bg-white rounded-xl border shadow p-6'>
                         {!activeOrder.order.deliveryOtpVerification && !showOtpBox && (
                             <button onClick={sendOtp} className='w-full py-4 bg-green-600 hover:bg-green-500 text-center text-white rounded-lg'>
-                                {sendOtpLoading?<Loader size={16} className='animate-spin text-white' />:"Mark as Delivered"}</button>
+                                {sendOtpLoading?<Loader size={16} className='animate-spin text-white text-center' />:"Mark as Delivered"}</button>
                         )}
                         {showOtpBox && <div className='mt-4'>
                             <input type="text" className='w-full py-3 border rounded-lg text-center' placeholder='Enter OTP' maxLength={4}
                              onChange={(e)=>setOtp(e.target.value)} value={otp} />
                             <button className='w-full mt-4 bg-blue-600 text-center text-white py-3 rounded-lg' onClick={verifyOtp}>
-                                {verifyOtpLoading?<Loader size={16} className='animate-spin text-white' />:"Verify Otp"}</button>
+                                {verifyOtpLoading?<Loader size={16} className='animate-spin text-white text-center' />:"Verify Otp"}</button>
                                 {otpError && <div className='text-red-600 mt-2'>{otpError}</div>}
 
                         </div>
 
                         }
                         {activeOrder.order.deliveryOtpVerification && <div className='text-green-700 text-center
-                        font-bold'>Delivey Completed!
+                        font-bold'>Delivery Completed!
                             </div>}
 
                     </div>

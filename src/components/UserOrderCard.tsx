@@ -44,7 +44,7 @@ interface IOrder {
 function UserOrderCard({ order }: { order: IOrder }) {
     const [expanded, setExpanded] = useState(false)
     const [status, setStatus] = useState(order.status)
-    const router=useRouter()
+    const router = useRouter()
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -52,7 +52,7 @@ function UserOrderCard({ order }: { order: IOrder }) {
                 return "bg-yellow-100 text-yellow-700 border-yellow-300"
             case "out of delivery":
                 return "bg-blue-100 text-blue-700 border-blue-300"
-            case "deliverd":
+            case "delivered":
                 return "bg-green-100 text-green-700 border-green-300"
             default:
                 return "bg-gray-100 text-gray-600 border-gray-300"
@@ -80,18 +80,19 @@ function UserOrderCard({ order }: { order: IOrder }) {
                     <p>{new Date(order.createdAt!).toLocaleString()}</p>
                 </div>
                 <div className='flex flex-wrap items-center gap-2'>
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${order.isPaid ?
+                    {status !== "delivered" && <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${order.isPaid ?
                         "bg-green-100 text-green-700 border-green-300"
                         : "bg-red-100 text-red-700 border-red-300"
                         }`}>
                         {order.isPaid ? "Paid" : "Unpaid"}
-                    </span>
+                    </span>}
+
                     <span className={`px3 py-1 text-xs font-semibold border rounded-full 
             ${getStatusColor(status)}`}>{status}</span>
 
                 </div>
             </div>
-            <div className='p-5 space-y-4'>
+            {status!=="delivered" &&             <div className='p-5 space-y-4'>
                 {order.paymentMethod == "cod" ? <div className='flex items-center text-gray-700 text-sm gap-2'>
                     <Truck size={16} className='text-green-600' /> Cash On Delivery
 
@@ -111,9 +112,9 @@ function UserOrderCard({ order }: { order: IOrder }) {
                     <a href={`tel:${order.assignedDeliveryBoy.mobile}`}
                         className='bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700 transition'>Call</a>
                 </div>
-                {/* Track Order */}
+                    {/* Track Order */}
                     <button className='w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2
-                rounded-xl shadow hover:bg-green-700 transition' onClick={()=>router.push(`/user/track-order/${order._id?.toString()}`)}><Truck size={18} /> Track Your Order</button></>}
+                rounded-xl shadow hover:bg-green-700 transition' onClick={() => router.push(`/user/track-order/${order._id?.toString()}`)}><Truck size={18} /> Track Your Order</button></>}
                 <div className='flex items-center gap-2 text-gray-700 text-sm'>
                     <MapPin size={16} className='text-green-600' />
                     <span className='truncate'>{order.address.fullAddress}</span>
@@ -167,7 +168,8 @@ function UserOrderCard({ order }: { order: IOrder }) {
                         Total: <span className='text-green-700 font-semibold'>रु{order.totalAmount}</span>
                     </div>
                 </div>
-            </div>
+            </div> }
+
         </motion.div>
     )
 }

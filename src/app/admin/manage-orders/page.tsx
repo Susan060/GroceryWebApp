@@ -56,14 +56,22 @@ function ManageOrders() {
         }
         getOrders()
     }, [])
-    useEffect(():any=>{
-        const socket=getSocket()
-        socket?.on("new-order",(newOrder)=>{
+    useEffect((): any => {
+        const socket = getSocket()
+        socket?.on("new-order", (newOrder) => {
             console.log(newOrder)
-            setOrders((prev)=>[newOrder,...prev!])
+            setOrders((prev) => [newOrder, ...prev!])
         })
-        return ()=>socket.off("new-order")
-    },[])
+        socket.on("order-assigned", ({ orderId, assignedDeliveryBoy }) => {
+            setOrders((prev) => prev?.map((o) => (
+                o._id == orderId ? { ...o, assignedDeliveryBoy } : o
+            )))
+        })
+        return () => {
+            socket.off("new-order")
+            socket.off("order-assigned")
+        }
+    }, [])
     return (
         <div className='min-h-screen bg-gray-50 w-full'>
             <div className='fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b z-50'>

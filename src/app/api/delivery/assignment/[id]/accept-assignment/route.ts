@@ -1,8 +1,11 @@
 import { auth } from "@/auth";
 import connectDb from "@/lib/db";
+import emitEventHandler from "@/lib/emitEventHandler";
 import DeliveryAssignment from "@/models/deliveryAssignmentModel";
 import Order from "@/models/order.model";
 import { NextRequest, NextResponse } from "next/server";
+
+
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -54,6 +57,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         }
         order.assignedDeliveryBoy = deliveryBoyId
         order.save()
+        await order.populate("assignedDeliveryBoy")
+        await emitEventHandler("order-assigned",{orderId:order._id,assignedDeliveryBoy:order.assignedDeliveryBoy})
 
         await DeliveryAssignment.updateMany(
             {
