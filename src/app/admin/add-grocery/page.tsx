@@ -47,7 +47,7 @@ function AddGrocery() {
                 formData.append("image",backendImage)
             }
             const result=await axios.post("/api/admin/add-grocery",formData)
-            console.log(result.data)
+            // console.log(result.data)
             setLoading(false)
             
         } catch (error) {
