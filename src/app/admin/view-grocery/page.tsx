@@ -22,11 +22,13 @@ const units = ["kg", "g", "liter", "ml", "piece", "pack"]
 function ViewGrocery() {
     const router = useRouter()
     const [groceries, setGroceries] = useState<IGrocery[]>()
+    const [search,setSearch]=useState("")
     const [editing, setEditing] = useState<IGrocery | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [backendImage, setBackendImage] = useState<Blob | null>(null)
     const [loading, setLoading] = useState(false)
     const [deleteLoading,setDeleteLoading]=useState(false)
+    const[filtered,setFiltered]=useState<IGrocery[]>()
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
@@ -77,6 +79,7 @@ function ViewGrocery() {
                 const result = await axios.get("/api/admin/get-groceries")
                 // console.log(result)
                 setGroceries(result.data)
+                setFiltered(result.data)
             }
             catch (error) {
                 console.log(error)
@@ -90,6 +93,14 @@ function ViewGrocery() {
         }
 
     }, [editing])
+    const handleSearch=(e:React.FormEvent)=>{
+        e.preventDefault()
+        const q=search.toLowerCase()
+        setFiltered(
+            groceries?.filter((g)=>g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q)
+            
+        ))
+    }
 
     return (
         <div className='pt-4 w-[95%] md:w-[85%] mx-auto pb-20'>
@@ -109,15 +120,17 @@ function ViewGrocery() {
             <motion.form
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
+                onSubmit={handleSearch}
                 transition={{ duration: 0.4 }}
                 className='flex items-center bg-white border border-gray-200  rounded-full px-5 py-3 shadow-sm
                 mb-10 hover:shadow-lg transition-all max-w-lg mx-auto w-full'>
                 <Search className='text-gray-500 w-5 h-5 mr-2' />
-                <input type='text' placeholder='serach by name or categorgy' className='w-full outline-none text-gray-700  placeholder-gray-400' />
+                <input type='text' placeholder='serach by name or categorgy' className='w-full outline-none text-gray-700  placeholder-gray-400'
+                value={search} onChange={(e)=>setSearch(e.target.value)} />
             </motion.form>
             {/* Cards for groceries */}
             <div className='space-y-4'>
-                {groceries?.map((g, i) => (
+                {filtered?.map((g, i) => (
                     <motion.div
                         key={i}
                         whileHover={{ scale: 1.01 }}
