@@ -1,6 +1,6 @@
 'use client'
 import mongoose from 'mongoose'
-import React, { use, useEffect, useRef, useState } from 'react'
+import React, { FormEvent, use, useEffect, useRef, useState } from 'react'
 import Link from "next/link";
 import { Package, Search, ShoppingCart, ShoppingCartIcon, User, LogOut, Cross, X, Plus, PlusCircle, Boxes, ClipboardCheck, Sidebar, Menu } from 'lucide-react';
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import { signOut } from 'next-auth/react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { useRouter } from 'next/navigation';
 
 interface IUser {
     _id?: mongoose.Types.ObjectId
@@ -26,6 +27,8 @@ function Nav({ user }: { user: IUser }) {
     const profileDropDown = useRef<HTMLDivElement>(null)
     const [menuOpen, setMenuOpen] = useState(false)
     const { cartData } = useSelector((state: RootState) => state.cart)
+    const [search, setSearch] = useState("")
+    const router = useRouter()
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (profileDropDown.current && !profileDropDown.current.contains(e.target as Node)) {
@@ -35,7 +38,17 @@ function Nav({ user }: { user: IUser }) {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+    const handleSearch = (e: FormEvent) => {
+        e.preventDefault()
+        const query = search.trim()
+        if (!query) {
+            return router.push("/")
+        }
+        router.push(`/?q=${encodeURIComponent(query)}`)
+        setSearch("")
+        setSearchBarOpen(false)
 
+    }
     const sideBar = menuOpen ? createPortal(
         <AnimatePresence>
             {/* MenuBar */}
@@ -73,13 +86,17 @@ function Nav({ user }: { user: IUser }) {
     return (
         <div className='w-[95%] fixed top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-green-500 to-green-700 rounded-2xl shadow-lg shadow-black/30 flex justify-between items-center h-15 px-4 md:px-8 z-50'>
             <Link href={"/"} className='text-white font-extrabold text-2xl sm:text-3xl tracking-wide hover:scale-105 transition-transform'>GroceryGo</Link>
-            {user.role == "user" && <form className='hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md'>
+            {user.role == "user" && <form className='hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md'
+                onSubmit={handleSearch}>
                 <Search className='text-gray-500 w-5 h-5 mr-2' />
-                <input type='text' placeholder='Search Groceries...' className='w-full outline-none text-gray-700 placeholder-gray-400' />
+                <input type='text' value={search} placeholder='Search Groceries...' className='w-full outline-none text-gray-700 placeholder-gray-400'
+                    onChange={
+                        (e) => setSearch(e.target.value)
+                    } />
             </form>}
 
             <div className='flex items-center gap-3 md:gap-6 relative'>
-                {user.role == "user" && <>                <div className='bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition md:hidden' onClick={() => setSearchBarOpen((prev) => !prev)}>
+                {user.role == "user" && <><div className='bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition md:hidden' onClick={() => setSearchBarOpen((prev) => !prev)}>
                     <Search className='text-green-600 w-6 h-6' />
                 </div>
                     <Link href={"/user/cart"} className='relative bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition'>
@@ -98,7 +115,7 @@ function Nav({ user }: { user: IUser }) {
                         <Menu className='text-green-600 w-6 h-6' />
                     </div>
                 </>}
-
+                {/* For mobile devices */}
                 <div className='relative' ref={profileDropDown}>
                     <div className='bg-white rounded-full w-11 h-11 flex items-center justify-center overflow-hidden shadow-md hover:scale-105 transition-transform relative ' onClick={() => setOpen(prev => !prev)}>
                         {user.image ? <Image src={user.image} alt='user' fill className='object-cover runded-full' /> : <User />}
@@ -131,7 +148,6 @@ function Nav({ user }: { user: IUser }) {
 
                         </motion.div>}
                     </AnimatePresence>
-
                     <AnimatePresence>
                         {searchBarOpen &&
                             <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -140,8 +156,10 @@ function Nav({ user }: { user: IUser }) {
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 className='fixed top-24 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-full shadow-lg z-40 flex items-center px-4 py-2'>
                                 <Search className='text-gray-500 w-5 h-5 mr-2' />
-                                <form className='grow'>
-                                    <input type='text' placeholder='search groceries...' className='w-full outline-none text-gray-700' />
+                                <form className='grow' onSubmit={handleSearch}>
+                                    <input type='text' placeholder='search groceries...' className='w-full outline-none text-gray-700' value={search} onChange={
+                                        (e) => setSearch(e.target.value)
+                                    } />
                                 </form>
                                 <button onClick={() => setSearchBarOpen(false)}>
                                     <X className='text-gray-500 w-5 h-5' />
