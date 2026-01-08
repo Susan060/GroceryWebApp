@@ -183,7 +183,7 @@ function DeliveryBoyDashboard({ earning }: { earning: number }) {
                         <LiveMap userLocation={userLocation} deliveryBoyLocation={deliveryBoyLocation} />
 
                     </div>
-                    <DeliveryChat orderId={activeOrder.order._id} deliveryBoyId={userData?._id!} />
+                    <DeliveryChat orderId={activeOrder.order._id} deliveryBoyId={userData?._id?.toString()!} />
                     <div className='mt-6 bg-white rounded-xl border shadow p-6'>
                         {!activeOrder.order.deliveryOtpVerification && !showOtpBox && (
                             <button onClick={sendOtp} className='w-full py-4 bg-green-600 hover:bg-green-500 text-center text-white rounded-lg'>

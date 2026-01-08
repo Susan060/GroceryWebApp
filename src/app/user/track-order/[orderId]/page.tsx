@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import axios from 'axios'
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 import { IUser } from '@/models/user.model'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
@@ -14,11 +14,11 @@ import { AnimatePresence } from 'motion/react'
 import { IMessage } from '@/models/message.model'
 
 interface IOrder {
-    _id?: mongoose.Types.ObjectId
-    user: mongoose.Types.ObjectId
+    _id?: string
+    user: string
     items: [
         {
-            grocery: mongoose.Types.ObjectId,
+            grocery: string,
             name: string,
             price: string,
             unit: string,
@@ -39,7 +39,7 @@ interface IOrder {
         latitude: number,
         longitude: number,
     }
-    assignment?: mongoose.Types.ObjectId,
+    assignment?: string,
     assignedDeliveryBoy?: IUser,
     status: "pending" | "out of delivery" | "delivered",
     createdAt?: Date,
@@ -156,7 +156,7 @@ function TrackOrder({ params }: { params: { orderId: string } }) {
     const getSuggestion = async () => {
         setLoading(true)
         try {
-            const lastMessage = messages?.filter(m => m.senderId !== userData?._id)?.at(-1)
+            const lastMessage = messages?.filter(m => m.senderId.toString() !== userData?._id)?.at(-1)
             const result = await axios.post("/api/chat/ai-suggestions", { message: lastMessage?.text, role: "user" })
             // console.log(result.data)
             setSuggestions(result.data)
@@ -217,10 +217,10 @@ function TrackOrder({ params }: { params: { orderId: string } }) {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0 }}
                                         transition={{ duration: 0.2 }}
-                                        className={`flex ${msg.senderId == userData?._id ? "justify-end" : "justify-start"}`}
+                                        className={`flex ${msg.senderId.toString() == userData?._id ? "justify-end" : "justify-start"}`}
                                     >
                                         <div className={`px-4 py-2 max-w-[75%] rounded-2xl shadow
-                                                ${msg.senderId === userData?._id
+                                                ${msg.senderId.toString() === userData?._id
                                                 ? "bg-green-600 text-white rounded-br-none"
                                                 : "bg-gray-100 text-gray-800 rounded-bl-none"
                                             }

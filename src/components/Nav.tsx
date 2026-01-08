@@ -1,5 +1,5 @@
 'use client'
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 import React, { FormEvent, use, useEffect, useRef, useState } from 'react'
 import Link from "next/link";
 import { Package, Search, ShoppingCart, ShoppingCartIcon, User, LogOut, Cross, X, Plus, PlusCircle, Boxes, ClipboardCheck, Sidebar, Menu } from 'lucide-react';
@@ -12,7 +12,7 @@ import { RootState } from '@/redux/store';
 import { useRouter } from 'next/navigation';
 
 interface IUser {
-    _id?: mongoose.Types.ObjectId
+    _id?: string
     name: string
     email: string
     password?: string

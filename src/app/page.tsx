@@ -11,6 +11,7 @@ import AdminDashboard from "@/components/AdminDashboard";
 import DeliveryBoy from "@/components/DeliveryBoy";
 import GeoUpdater from "@/components/GeoUpdater";
 import Grocery, { IGrocery } from "@/models/grocery.model";
+import Footer from "@/components/Footer";
 
 
 async function Home(props: {
@@ -52,6 +53,7 @@ async function Home(props: {
       <Nav user={plainUser} />
       <GeoUpdater userId={plainUser._id} />
       {user.role == "user" ? (<UserDashboard groceryList={groceryList}/>) : user.role == "admin" ? (<AdminDashboard />) : <DeliveryBoy />}
+      <Footer/>
     </>
   );
 }
