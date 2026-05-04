@@ -21,10 +21,14 @@ export default function RootLayout({
       <body className="w-full min-h-screen  bg-linear-to-b from-green-100 to-white">
         <Provider>
           <StoreProvider>
-            <InitUser/>
+            <InitUser />
             {children}
           </StoreProvider>
         </Provider>
+        <script
+          src="https://bot-assist-khaki.vercel.app/chatBot.js"
+          data-owner-id="usr_123879224544068099">
+        </script>
       </body>
     </html>
   );
